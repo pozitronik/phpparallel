@@ -1,0 +1,28 @@
+{
+	"name" : "pozitronik/phpparallel",
+	"description" : "Multi-threaded PHP examples",
+	"minimum-stability" : "stable",
+	"license" : "proprietary",
+	"authors" : [
+		{
+			"name" : "Pozitronik",
+			"email" : "antikillerxxl@gmail.com"
+		}
+	],
+	"require" : {
+		"php" : ">=8.1",
+		"yiisoft/yii2" : "2.0.47",
+		"yiisoft/yii2-bootstrap" : "~2.0.0"
+	},
+	"repositories" : [
+		{
+			"type" : "composer",
+			"url" : "https://asset-packagist.org"
+		}
+	],
+	"config" : {
+		"allow-plugins" : {
+			"yiisoft/yii2-composer" : true
+		}
+	}
+}
