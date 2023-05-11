@@ -2,32 +2,33 @@ version: '3.7'
 name: 'php_parallel'
 services:
 
-  nginx:
-    container_name: nginx
-    image: nginx:latest
-    environment:
-      NGINX_ENTRYPOINT_WORKER_PROCESSES_AUTOTUNE: "0"
-    ports:
-      - "8080:8080"
-    volumes:
-      - ./:/var/www
-      - ./docker/nginx/config:/etc/nginx/conf.d
-      - ./docker/nginx/include:/etc/nginx/include
-      - ./logs:/var/www/logs
-      - ./logs/nginx:/var/www/logs/nginx
-    links:
-      - php
-    networks:
-      - backend
+#  nginx:
+#    container_name: nginx-parallel
+#    image: nginx:latest
+#    environment:
+#      NGINX_ENTRYPOINT_WORKER_PROCESSES_AUTOTUNE: "0"
+#    ports:
+#      - "8080:8080"
+#    volumes:
+#      - ./:/var/www
+#      - ./docker/nginx/config:/etc/nginx/conf.d
+#      - ./docker/nginx/include:/etc/nginx/include
+#      - ./logs:/var/www/logs
+#      - ./logs/nginx:/var/www/logs/nginx
+#    links:
+#      - php
+#    networks:
+#      - backend
 
   php:
-    container_name: php-fpm
+    container_name: php-parallel
     build: ./docker/php
     volumes:
       - .:/var/www
       - ./docker/php/config/php.ini:/usr/local/etc/php/php.ini
     networks:
       - backend
+    tty: true
 
 # Networks Setup
 networks:
