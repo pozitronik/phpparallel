@@ -6,7 +6,7 @@ RUN apt-get update \
     && printf "\n" | pecl install apcu-5.1.21 \
     && docker-php-ext-enable apcu
 
-RUN docker-php-ext-install pdo pdo_mysql bcmath zip gd sockets pdo_pgsql pgsql opcache
+RUN docker-php-ext-install pdo pdo_mysql bcmath zip gd sockets pdo_pgsql pgsql opcache parallel
 
 COPY --from=composer:latest /usr/bin/composer /usr/local/bin/composer
 RUN curl --remote-name ./php/cacert.pem https://curl.se/ca/cacert.pem
