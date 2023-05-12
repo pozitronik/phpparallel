@@ -25,7 +25,6 @@ namespace parallel {
 		 * @param string $bootstrap
 		 */
 		public function __construct(string $bootstrap = '') {
-
 		}
 	}
 
@@ -41,7 +40,6 @@ namespace parallel {
 
 	/**
 	 * @see https://www.php.net/manual/en/class.parallel-channel.php
-	 * @method __construct(int $capacity)
 	 * @method make(string $name, void|int $capacity):Channel
 	 * @method open(string $name):Channel
 	 * @method recv():mixed
@@ -50,6 +48,13 @@ namespace parallel {
 	 * @const Infinite
 	 */
 	final class Channel {
+		public const Infinite = -1;
+
+		/**
+		 * @param int $capacity
+		 */
+		public function __construct(int $capacity = self::Infinite) {
+		}
 	}
 
 	/**
@@ -67,13 +72,17 @@ namespace parallel {
 
 	/**
 	 * @see https://www.php.net/manual/en/class.parallel-events.php
-	 * @method __construct(bool|int|float|string $value)
 	 * @method get():bool|int|float|string
 	 * @method set(bool|int|float|string $value)
 	 * @method notify(bool $all)
 	 * @method __invoke(callable $critical)
 	 */
 	final class Sync {
+		/**
+		 * @param bool|int|float|string $value
+		 */
+		public function __construct(bool|int|float|string $value) {
+		}
 	}
 }
 
@@ -102,14 +111,13 @@ namespace parallel\Events\Type {
 
 	/**
 	 * @see https://www.php.net/manual/en/class.parallel-events-event-type.php
-	 * @const Read = 1
-	 * @const Write = 2
-	 * @const Close = 3
-	 * @const Cancel = 5
-	 * @const Kill = 6
-	 * @const Error = 4
 	 */
 	final class Type {
-
+		public const Read = 1;
+		public const Write = 2;
+		public const Close = 3;
+		public const Cancel = 5;
+		public const Kill = 6;
+		public const Error = 4;
 	}
 }
