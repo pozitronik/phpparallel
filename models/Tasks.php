@@ -14,7 +14,7 @@ class Tasks {
 	 * @return string
 	 */
 	public static function waiter(int $pause = 5, string $message = ""):string {
-		echo "Wait for {$pause} s.";
+		echo "Wait for {$pause} s.\n";
 		sleep($pause);
 		return $message;
 	}
