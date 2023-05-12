@@ -15,12 +15,18 @@ namespace parallel {
 
 	/**
 	 * @see https://www.php.net/manual/en/class.parallel-runtime.php
-	 * @method __construct(void|string $bootstrap)
-	 * @method run(Closure $task, void|array $argv = []):?Future
+	 * @method run(Closure $task, array $argv = []):?Future
 	 * @method close():void
 	 * @method kill():void
 	 */
 	final class Runtime {
+
+		/**
+		 * @param string $bootstrap
+		 */
+		public function __construct(string $bootstrap = '') {
+
+		}
 	}
 
 	/**
@@ -35,7 +41,7 @@ namespace parallel {
 
 	/**
 	 * @see https://www.php.net/manual/en/class.parallel-channel.php
-	 * @method __construct(void|int $capacity)
+	 * @method __construct(int $capacity)
 	 * @method make(string $name, void|int $capacity):Channel
 	 * @method open(string $name):Channel
 	 * @method recv():mixed
