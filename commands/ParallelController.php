@@ -4,6 +4,8 @@ declare(strict_types = 1);
 namespace app\commands;
 
 use app\models\Tasks;
+use parallel\Channel;
+use parallel\Future;
 use Yii;
 use yii\console\Application;
 use yii\console\Controller;
@@ -85,5 +87,38 @@ class ParallelController extends Controller {
 			echo("[run: $i]\n");
 			$runtime->run($task, [$i, $pause]);
 		}
+	}
+
+	/**
+	 * This example shows how to receive data from tasks
+	 * @param int $threadsCnt
+	 * @param null|int $pause Pass null to random wait time for every task
+	 * @return void
+	 */
+	public function actionSampleFour(int $threadsCnt = 10, ?int $pause = null):void {
+		$ch = new Channel(Channel::Infinite);
+
+		$task = static function(Channel $ch, int $threadNumber, ?int $pause):void {
+			$ch->send(sprintf("[enter: %s]", $threadNumber));
+			sleep($pause??random_int(5, 20));
+			$ch->send(sprintf("[exit: %s]", $threadNumber));
+		};
+		/** @var Runtime[] $runtimeList */
+		$runtimeList = [];
+		for ($i = 0; $i < $threadsCnt; $i++) {
+			$runtimeList[] = new Runtime();
+		}
+
+		/** @var Future[] $futuresList */
+		$futuresList = [];
+		foreach ($runtimeList as $i => $runtime) {
+			echo("[run: $i]\n");
+			$futuresList[] = $runtime->run($task, [$ch, $i, $pause]);
+		}
+
+		for ($i = 0; $i < $threadsCnt; $i++) {
+			Console::output($ch->recv());
+		}
+//		$ch->close();
 	}
 }
