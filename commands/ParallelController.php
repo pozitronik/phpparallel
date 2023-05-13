@@ -94,6 +94,8 @@ class ParallelController extends Controller {
 	 * @param int $threadsCnt
 	 * @param null|int $pause Pass null to random wait time for every task
 	 * @return void
+	 *
+	 * todo
 	 */
 	public function actionSampleFour(int $threadsCnt = 10, ?int $pause = null):void {
 		$ch = new Channel(Channel::Infinite);
@@ -120,5 +122,59 @@ class ParallelController extends Controller {
 			Console::output($ch->recv());
 		}
 //		$ch->close();
+	}
+
+	/**
+	 * This example demonstrates parallel task effectiveness
+	 * @param int $tasksCount
+	 * @return void
+	 */
+	public function actionSampleSix(int $tasksCount = 3):void {
+		$syncResults = [];
+		$asyncResults = [];
+		/** @var Runtime[] $runtimeList */
+		$runtimeList = [];
+		/** @var Future[] $futuresList */
+		$futuresList = [];
+
+		/*Let say we have a set of long operations (e.g. DB requests). At first, run them synchronously: */
+		$startTime = microtime(true);
+		for ($i = 0; $i < $tasksCount; $i++) {
+			$syncResults[] = call_user_func(static function() {
+				sleep(5);
+				return true;
+			});
+		}
+		/* Measure execution time */
+		$synchronousTime = microtime(true) - $startTime;
+		Console::output(Console::renderColoredString("%bSynchronous%n summary time for %b{$tasksCount}%n tasks is %g{$synchronousTime}%n seconds"));
+
+		/*At second, run each task in a separate process: */
+		$startTime = microtime(true);
+
+		for ($i = 0; $i < $tasksCount; $i++) {
+			$runtimeList[] = new Runtime();
+		}
+
+		foreach ($runtimeList as $i => $runtime) {
+			$futuresList[] = $runtime->run(static function() {
+				sleep(5);
+				return true;
+			});
+		}
+
+		while ([] !== $futuresList) {
+			foreach ($futuresList as $index => $future) {
+				if ($future->done()) {
+					$asyncResults[] = $future->value();
+					unset($futuresList[$index]);
+				}
+			}
+		}
+
+		$asynchronousTime = microtime(true) - $startTime;
+		Console::output(Console::renderColoredString("%bAsynchronous%n summary time for %b{$tasksCount}%n tasks is %g{$asynchronousTime}%n seconds"));
+		Console::output(sprintf("Difference is %s seconds", $synchronousTime - $asynchronousTime));
+		Console::output(Console::renderColoredString(sprintf("Results are %s", ($syncResults === $asyncResults)?"%gequal%n":"%gnot equal%n")));
 	}
 }
