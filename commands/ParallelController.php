@@ -4,6 +4,7 @@ declare(strict_types = 1);
 namespace app\commands;
 
 use app\models\Tasks;
+use Exception;
 use parallel\Channel;
 use parallel\Future;
 use Yii;
@@ -128,6 +129,7 @@ class ParallelController extends Controller {
 	 * This example demonstrates parallel task effectiveness
 	 * @param int $tasksCount
 	 * @return void
+	 * @throws Exception
 	 */
 	public function actionSampleSix(int $tasksCount = 3):void {
 		$syncResults = [];
@@ -136,14 +138,20 @@ class ParallelController extends Controller {
 		$runtimeList = [];
 		/** @var Future[] $futuresList */
 		$futuresList = [];
+		/** @var float[] $results */
+		$results = [];
+		/* Generate random `results` */
+		for ($i = 0; $i < $tasksCount; $i++) {
+			$results[] = random_int(1, 100) / random_int(1, 100);
+		}
 
 		/*Let say we have a set of long operations (e.g. DB requests). At first, run them synchronously: */
 		$startTime = microtime(true);
 		for ($i = 0; $i < $tasksCount; $i++) {
-			$syncResults[] = call_user_func(static function() {
+			$syncResults[] = call_user_func(static function(float $result):float {
 				sleep(5);
-				return true;
-			});
+				return $result;
+			}, $results[$i]);
 		}
 		/* Measure execution time */
 		$synchronousTime = microtime(true) - $startTime;
@@ -157,10 +165,10 @@ class ParallelController extends Controller {
 		}
 
 		foreach ($runtimeList as $i => $runtime) {
-			$futuresList[] = $runtime->run(static function() {
+			$futuresList[] = $runtime->run(static function(float $result):float {
 				sleep(5);
-				return true;
-			});
+				return $result;
+			}, [$results[$i]]);
 		}
 
 		while ([] !== $futuresList) {
@@ -175,6 +183,6 @@ class ParallelController extends Controller {
 		$asynchronousTime = microtime(true) - $startTime;
 		Console::output(Console::renderColoredString("%bAsynchronous%n summary time for %b{$tasksCount}%n tasks is %g{$asynchronousTime}%n seconds"));
 		Console::output(sprintf("Difference is %s seconds", $synchronousTime - $asynchronousTime));
-		Console::output(Console::renderColoredString(sprintf("Results are %s", ($syncResults === $asyncResults)?"%gequal%n":"%gnot equal%n")));
+		Console::output(Console::renderColoredString(sprintf("Results are %s", (array_sum($syncResults) === array_sum($asyncResults))?"%gequal%n":"%gnot equal%n")));
 	}
 }
