@@ -19,4 +19,13 @@ class Tasks {
 		return $message;
 	}
 
+	/**
+	 * @return bool
+	 */
+	private static function simulateDBRequest():bool {
+		sleep(5);
+		return true;
+	}
+
+
 }
