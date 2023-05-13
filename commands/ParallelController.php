@@ -247,10 +247,11 @@ class ParallelController extends Controller {
 	/**
 	 * This test demonstrates real calculation performance (it is nice to look at the task manager, while it runs)
 	 * @param int $tasksCount
+	 * @param int $runTime
 	 * @return void
 	 * @throws Exception
 	 */
-	public function actionSampleEight(int $tasksCount = 3):void {
+	public function actionSampleEight(int $tasksCount = 3, int $runTime = 5):void {
 		$syncResults = [];
 		$asyncResults = [];
 		/** @var Runtime[] $runtimeList */
@@ -267,7 +268,7 @@ class ParallelController extends Controller {
 		/*Let say we have a set of long operations (e.g. DB requests). At first, run them synchronously: */
 		$startTime = microtime(true);
 		for ($i = 0; $i < $tasksCount; $i++) {
-			$syncResults[] = Tasks::simulateCalculation($results[$i]);
+			$syncResults[] = Tasks::simulateCalculation($results[$i], $runTime);
 		}
 		/* Measure execution time */
 		$synchronousTime = microtime(true) - $startTime;
@@ -281,9 +282,9 @@ class ParallelController extends Controller {
 		}
 		$config = require Yii::getAlias('@app/config/console.php');
 		foreach ($runtimeList as $i => $runtime) {
-			$futuresList[] = $runtime->run(static function(float $result) use ($config):float {
+			$futuresList[] = $runtime->run(static function(float $result) use ($config, $runTime):float {
 				new Application($config);
-				return Tasks::simulateCalculation($result);
+				return Tasks::simulateCalculation($result, $runTime);
 			}, [$results[$i]]);
 		}
 
