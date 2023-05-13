@@ -20,12 +20,12 @@ class Tasks {
 	}
 
 	/**
-	 * @return bool
+	 * @param float $result
+	 * @return float
 	 */
-	private static function simulateDBRequest():bool {
+	public static function simulateDBRequest(float $result):float {
 		sleep(5);
-		return true;
+		return $result;
 	}
-
 
 }
