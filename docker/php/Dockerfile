@@ -1,6 +1,6 @@
 FROM php:8.2.1-zts
 RUN apt-get update \
-    && apt-get install -y nano vim wget git unzip zlib1g-dev libpng-dev libzip-dev libpq-dev \
+    && apt-get install -y nano vim wget git htop zlib1g-dev libpng-dev libzip-dev libpq-dev \
     && pecl install xdebug-3.2.1 parallel \
     && docker-php-ext-enable xdebug parallel \
     && printf "\n" | pecl install apcu-5.1.21 \
