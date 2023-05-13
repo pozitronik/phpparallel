@@ -72,9 +72,9 @@ class ParallelController extends Controller {
 	 * @return void
 	 */
 	public function actionSampleTree(int $threadsCnt = 10, ?int $pause = null):void {
-		$config = Yii::getAlias('@app/config/console.php');
+		$config = require Yii::getAlias('@app/config/console.php');
 		$task = static function(int $threadNumber, ?int $pause) use ($config):void {
-			new Application(require $config);
+			new Application($config);
 			Console::output("[enter: $threadNumber]");
 			Console::output(Tasks::waiter($pause??random_int(5, 20), "[exit: $threadNumber]"));
 		};
@@ -183,6 +183,122 @@ class ParallelController extends Controller {
 		$asynchronousTime = microtime(true) - $startTime;
 		Console::output(Console::renderColoredString("%bAsynchronous%n summary time for %b{$tasksCount}%n tasks is %g{$asynchronousTime}%n seconds"));
 		Console::output(sprintf("Difference is %s seconds", $synchronousTime - $asynchronousTime));
-		Console::output(Console::renderColoredString(sprintf("Results are %s", (array_sum($syncResults) === array_sum($asyncResults))?"%gequal%n":"%gnot equal%n")));
+		Console::output(Console::renderColoredString(sprintf("Results are %s", (array_sum($syncResults) === array_sum($asyncResults))?"%gequal%n":"%rnot equal%n")));
+	}
+
+	/**
+	 * This example demonstrates parallel task effectiveness (with additional bootstrapping)
+	 * @param int $tasksCount
+	 * @return void
+	 * @throws Exception
+	 */
+	public function actionSampleSeven(int $tasksCount = 3):void {
+		$syncResults = [];
+		$asyncResults = [];
+		/** @var Runtime[] $runtimeList */
+		$runtimeList = [];
+		/** @var Future[] $futuresList */
+		$futuresList = [];
+		/** @var float[] $results */
+		$results = [];
+		/* Generate random `results` */
+		for ($i = 0; $i < $tasksCount; $i++) {
+			$results[] = random_int(1, 100) / random_int(1, 100);
+		}
+
+		/*Let say we have a set of long operations (e.g. DB requests). At first, run them synchronously: */
+		$startTime = microtime(true);
+		for ($i = 0; $i < $tasksCount; $i++) {
+			$syncResults[] = Tasks::simulateDBRequest($results[$i]);
+		}
+		/* Measure execution time */
+		$synchronousTime = microtime(true) - $startTime;
+		Console::output(Console::renderColoredString("%bSynchronous%n summary time for %b{$tasksCount}%n tasks is %g{$synchronousTime}%n seconds"));
+
+		/*At second, run each task in a separate process: */
+		$startTime = microtime(true);
+
+		for ($i = 0; $i < $tasksCount; $i++) {
+			$runtimeList[] = new Runtime(Yii::getAlias('@app/bootstrap_console.php'));
+		}
+		$config = require Yii::getAlias('@app/config/console.php');
+		foreach ($runtimeList as $i => $runtime) {
+			$futuresList[] = $runtime->run(static function(float $result) use ($config):float {
+				new Application($config);
+				return Tasks::simulateDBRequest($result);
+			}, [$results[$i]]);
+		}
+
+		while ([] !== $futuresList) {
+			foreach ($futuresList as $index => $future) {
+				if ($future->done()) {
+					$asyncResults[] = $future->value();
+					unset($futuresList[$index]);
+				}
+			}
+		}
+
+		$asynchronousTime = microtime(true) - $startTime;
+		Console::output(Console::renderColoredString("%bAsynchronous%n summary time for %b{$tasksCount}%n tasks is %g{$asynchronousTime}%n seconds"));
+		Console::output(sprintf("Difference is %s seconds", $synchronousTime - $asynchronousTime));
+		Console::output(Console::renderColoredString(sprintf("Results are %s", (array_sum($syncResults) === array_sum($asyncResults))?"%gequal%n":sprintf("%%rnot equal%%n: %s|%s", array_sum($syncResults), array_sum($asyncResults)))));
+	}
+
+	/**
+	 * This test demonstrates real calculation performance (it is nice to look at the task manager, while it runs)
+	 * @param int $tasksCount
+	 * @return void
+	 * @throws Exception
+	 */
+	public function actionSampleEight(int $tasksCount = 3):void {
+		$syncResults = [];
+		$asyncResults = [];
+		/** @var Runtime[] $runtimeList */
+		$runtimeList = [];
+		/** @var Future[] $futuresList */
+		$futuresList = [];
+		/** @var float[] $results */
+		$results = [];
+		/* Generate random `results` */
+		for ($i = 0; $i < $tasksCount; $i++) {
+			$results[] = random_int(1, 100) / random_int(1, 100);
+		}
+
+		/*Let say we have a set of long operations (e.g. DB requests). At first, run them synchronously: */
+		$startTime = microtime(true);
+		for ($i = 0; $i < $tasksCount; $i++) {
+			$syncResults[] = Tasks::simulateCalculation($results[$i]);
+		}
+		/* Measure execution time */
+		$synchronousTime = microtime(true) - $startTime;
+		Console::output(Console::renderColoredString("%bSynchronous%n summary time for %b{$tasksCount}%n tasks is %g{$synchronousTime}%n seconds"));
+
+		/*At second, run each task in a separate process: */
+		$startTime = microtime(true);
+
+		for ($i = 0; $i < $tasksCount; $i++) {
+			$runtimeList[] = new Runtime(Yii::getAlias('@app/bootstrap_console.php'));
+		}
+		$config = require Yii::getAlias('@app/config/console.php');
+		foreach ($runtimeList as $i => $runtime) {
+			$futuresList[] = $runtime->run(static function(float $result) use ($config):float {
+				new Application($config);
+				return Tasks::simulateCalculation($result);
+			}, [$results[$i]]);
+		}
+
+		while ([] !== $futuresList) {
+			foreach ($futuresList as $index => $future) {
+				if ($future->done()) {
+					$asyncResults[] = $future->value();
+					unset($futuresList[$index]);
+				}
+			}
+		}
+
+		$asynchronousTime = microtime(true) - $startTime;
+		Console::output(Console::renderColoredString("%bAsynchronous%n summary time for %b{$tasksCount}%n tasks is %g{$asynchronousTime}%n seconds"));
+		Console::output(sprintf("Difference is %s seconds", $synchronousTime - $asynchronousTime));
+		Console::output(Console::renderColoredString(sprintf("Results are %s", (array_sum($syncResults) === array_sum($asyncResults))?"%gequal%n":sprintf("%%rnot equal%%n: %s|%s", array_sum($syncResults), array_sum($asyncResults)))));
 	}
 }

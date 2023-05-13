@@ -3,6 +3,9 @@ declare(strict_types = 1);
 
 namespace app\models;
 
+use Yii;
+use yii\base\Exception;
+
 /**
  * Parallel tasks
  */
@@ -25,6 +28,20 @@ class Tasks {
 	 */
 	public static function simulateDBRequest(float $result):float {
 		sleep(5);
+		return $result;
+	}
+
+	/**
+	 * @param float $result
+	 * @return float
+	 * @throws Exception
+	 */
+	public static function simulateCalculation(float $result):float {
+		$startTime = microtime(true);
+		$rnd = Yii::$app->security->generateRandomString();
+		while (5 > microtime(true) - $startTime) {
+			$rnd = sha1($rnd);
+		}
 		return $result;
 	}
 
