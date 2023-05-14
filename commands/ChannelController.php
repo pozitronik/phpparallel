@@ -43,7 +43,7 @@ class ChannelController extends Controller {
 				$taskData[$name] = $value;
 				foreach ($taskData as $name => $value) {
 					Console::moveCursorTo(1, $name + 1);
-					Console::output(printf("%s: %s", $name, $value));
+					Console::output(printf("%02s: %s", $name, $value));
 				}
 			}
 		}, [$channel]);
@@ -53,9 +53,9 @@ class ChannelController extends Controller {
 		}
 		/* Create set of senders tasks */
 		foreach ($runtimeList as $i => $runtime) {
-			$futuresList[] = $runtime->run(static function(Channel $channel) use ($i):void {
+			$futuresList[] = $runtime->run(static function(Channel $channel) use ($i, $tasksCount):void {
 				$rnd = strtr(base64_encode(random_bytes(32)), '+/', '-_');
-				$pause = random_int(1, 5);
+				$pause = random_int(1, $tasksCount);//Add a random pause
 				while (true) {
 					$rnd = sha1($rnd);
 					$channel->send([$i, $rnd]);
