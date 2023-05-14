@@ -14,7 +14,7 @@ use parallel\Runtime;
 use yii\helpers\Console;
 
 /**
- * Parallel PHP samples
+ * Those examples show how to operate with parallel\Runtime class.
  */
 class ParallelController extends Controller {
 
@@ -72,14 +72,14 @@ class ParallelController extends Controller {
 	public function actionSampleTree(int $threadsCnt = 10, ?int $pause = null):void {
 		$config = require Yii::getAlias('@app/config/console.php');
 		$task = static function(int $threadNumber, ?int $pause) use ($config):void {
-			new Application($config);
+			new Application($config);//!important
 			Console::output("[enter: $threadNumber]");
 			Console::output(Tasks::waiter($pause??random_int(5, 20), "[exit: $threadNumber]"));
 		};
 		/** @var Runtime[] $runtimeList */
 		$runtimeList = [];
 		for ($i = 0; $i < $threadsCnt; $i++) {
-			$runtimeList[] = new Runtime(Yii::getAlias('@app/bootstrap_console.php'));
+			$runtimeList[] = new Runtime(Yii::getAlias('@app/bootstrap_console.php'));//!also important
 		}
 
 		foreach ($runtimeList as $i => $runtime) {
