@@ -22,7 +22,7 @@ class ParallelController extends Controller {
 	 * This example runs two parallel task simultaneously
 	 * @return void
 	 */
-	public function actionSampleOne():void {
+	public function actionExampleOne():void {
 		$runtime = new Runtime();
 
 		$future = $runtime->run(function() {
@@ -43,7 +43,7 @@ class ParallelController extends Controller {
 	 * @param null|int $pause Pass null to random wait time for every task
 	 * @return void
 	 */
-	public function actionSampleTwo(int $threadsCnt = 10, ?int $pause = null):void {
+	public function actionExampleTwo(int $threadsCnt = 10, ?int $pause = null):void {
 		$task = static function(int $threadNumber, ?int $pause):void {
 			//Console::output("[enter: $threadNumber]");// ?!
 			echo("[enter: $threadNumber]\n");
@@ -69,7 +69,7 @@ class ParallelController extends Controller {
 	 * @param null|int $pause Pass null to random wait time for every task
 	 * @return void
 	 */
-	public function actionSampleTree(int $threadsCnt = 10, ?int $pause = null):void {
+	public function actionExampleTree(int $threadsCnt = 10, ?int $pause = null):void {
 		$config = require Yii::getAlias('@app/config/console.php');
 		$task = static function(int $threadNumber, ?int $pause) use ($config):void {
 			new Application($config);//!important
@@ -94,7 +94,7 @@ class ParallelController extends Controller {
 	 * @return void
 	 * @throws Exception
 	 */
-	public function actionSampleFour(int $tasksCount = 3):void {
+	public function actionExampleFour(int $tasksCount = 3):void {
 		$syncResults = [];
 		$asyncResults = [];
 		/** @var Runtime[] $runtimeList */
@@ -155,7 +155,7 @@ class ParallelController extends Controller {
 	 * @return void
 	 * @throws Exception
 	 */
-	public function actionSampleFive(int $tasksCount = 3):void {
+	public function actionExampleFive(int $tasksCount = 3):void {
 		$syncResults = [];
 		$asyncResults = [];
 		/** @var Runtime[] $runtimeList */
@@ -214,7 +214,7 @@ class ParallelController extends Controller {
 	 * @return void
 	 * @throws Exception
 	 */
-	public function actionSampleSix(int $tasksCount = 3, int $runTime = 5):void {
+	public function actionExampleSix(int $tasksCount = 3, int $runTime = 5):void {
 		$syncResults = [];
 		$asyncResults = [];
 		/** @var Runtime[] $runtimeList */
@@ -271,7 +271,7 @@ class ParallelController extends Controller {
 	 * This example shows how to catch exceptions inside parallel tasks
 	 * @return void
 	 */
-	public function actionSampleSeven():void {
+	public function actionExampleSeven():void {
 		$runtime = new Runtime();
 
 		$future = $runtime->run(function() {
