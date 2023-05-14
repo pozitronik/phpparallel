@@ -1,11 +1,10 @@
-<?php
+<?php /** @noinspection UsingInclusionReturnValueInspection */
 declare(strict_types = 1);
 
 namespace app\commands;
 
 use app\models\Tasks;
 use Exception;
-use parallel\Channel;
 use parallel\Future;
 use Throwable;
 use Yii;
@@ -90,47 +89,12 @@ class ParallelController extends Controller {
 	}
 
 	/**
-	 * This example shows how to receive data from tasks
-	 * @param int $threadsCnt
-	 * @param null|int $pause Pass null to random wait time for every task
-	 * @return void
-	 *
-	 * todo
-	 */
-	public function actionSampleFour(int $threadsCnt = 10, ?int $pause = null):void {
-		$ch = new Channel(Channel::Infinite);
-
-		$task = static function(Channel $ch, int $threadNumber, ?int $pause):void {
-			$ch->send(sprintf("[enter: %s]", $threadNumber));
-			sleep($pause??random_int(5, 20));
-			$ch->send(sprintf("[exit: %s]", $threadNumber));
-		};
-		/** @var Runtime[] $runtimeList */
-		$runtimeList = [];
-		for ($i = 0; $i < $threadsCnt; $i++) {
-			$runtimeList[] = new Runtime();
-		}
-
-		/** @var Future[] $futuresList */
-		$futuresList = [];
-		foreach ($runtimeList as $i => $runtime) {
-			echo("[run: $i]\n");
-			$futuresList[] = $runtime->run($task, [$ch, $i, $pause]);
-		}
-
-		for ($i = 0; $i < $threadsCnt; $i++) {
-			Console::output($ch->recv());
-		}
-//		$ch->close();
-	}
-
-	/**
 	 * This example demonstrates parallel task effectiveness
 	 * @param int $tasksCount
 	 * @return void
 	 * @throws Exception
 	 */
-	public function actionSampleSix(int $tasksCount = 3):void {
+	public function actionSampleFour(int $tasksCount = 3):void {
 		$syncResults = [];
 		$asyncResults = [];
 		/** @var Runtime[] $runtimeList */
@@ -191,7 +155,7 @@ class ParallelController extends Controller {
 	 * @return void
 	 * @throws Exception
 	 */
-	public function actionSampleSeven(int $tasksCount = 3):void {
+	public function actionSampleFive(int $tasksCount = 3):void {
 		$syncResults = [];
 		$asyncResults = [];
 		/** @var Runtime[] $runtimeList */
@@ -250,7 +214,7 @@ class ParallelController extends Controller {
 	 * @return void
 	 * @throws Exception
 	 */
-	public function actionSampleEight(int $tasksCount = 3, int $runTime = 5):void {
+	public function actionSampleSix(int $tasksCount = 3, int $runTime = 5):void {
 		$syncResults = [];
 		$asyncResults = [];
 		/** @var Runtime[] $runtimeList */
@@ -306,7 +270,7 @@ class ParallelController extends Controller {
 	 * This example shows how to catch exceptions inside parallel tasks
 	 * @return void
 	 */
-	public function actionSampleNine():void {
+	public function actionSampleSeven():void {
 		$runtime = new Runtime();
 
 		$future = $runtime->run(function() {
