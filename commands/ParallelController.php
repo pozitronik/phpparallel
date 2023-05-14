@@ -243,10 +243,11 @@ class ParallelController extends Controller {
 		for ($i = 0; $i < $tasksCount; $i++) {
 			$runtimeList[] = new Runtime(Yii::getAlias('@app/bootstrap_console.php'));
 		}
+		/*It is required to retrieve config here, because there's no Yii stuff inside a task */
 		$config = require Yii::getAlias('@app/config/console.php');
 		foreach ($runtimeList as $i => $runtime) {
 			$futuresList[] = $runtime->run(static function(float $result) use ($config, $runTime):float {
-				new Application($config);
+				new Application($config);//Create a new Yii::$app instance to initialize all
 				return Tasks::simulateCalculation($result, $runTime);
 			}, [$results[$i]]);
 		}
