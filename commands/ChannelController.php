@@ -23,6 +23,7 @@ class ChannelController extends Controller {
 	 * @return void
 	 */
 	public function actionOne(int $tasksCount = 3):void {
+		$config = require Yii::getAlias('@app/config/console.php');
 		Console::clearScreen();
 		/** @var Runtime[] $runtimeList */
 		$runtimeList = [];
@@ -31,27 +32,10 @@ class ChannelController extends Controller {
 		/* Create a Channel instance to communicate between task */
 		$channel = new Channel();
 
-		/*Create the reader (receiver) task. It should be created before senders */
-		$reader = new Runtime(Yii::getAlias('@app/bootstrap_console.php'));
-		$config = require Yii::getAlias('@app/config/console.php');
-		$reader->run(static function(Channel $channel) use ($config):void {
-			new Application($config);
-			$taskData = [];
-			while (true) {
-
-				[$name, $value] = $channel->recv();
-				$taskData[$name] = $value;
-				foreach ($taskData as $name => $value) {
-					Console::moveCursorTo(1, $name + 1);
-					Console::output(printf("%02s: %s", $name, $value));
-				}
-			}
-		}, [$channel]);
-
+		/* Create set of senders tasks */
 		for ($i = 0; $i < $tasksCount; $i++) {
 			$runtimeList[] = new Runtime();
 		}
-		/* Create set of senders tasks */
 		foreach ($runtimeList as $i => $runtime) {
 			$futuresList[] = $runtime->run(static function(Channel $channel) use ($i, $tasksCount):void {
 				$rnd = strtr(base64_encode(random_bytes(32)), '+/', '-_');
@@ -63,6 +47,22 @@ class ChannelController extends Controller {
 				}
 			}, [$channel]);
 		}
+
+		/*Create the reader (receiver) task. */
+		$reader = new Runtime(Yii::getAlias('@app/bootstrap_console.php'));
+		$reader->run(static function(Channel $channel) use ($config):void {
+			new Application($config);
+			$taskData = [];
+			while (true) {
+				[$name, $value] = $channel->recv();
+				$taskData[$name] = Console::renderColoredString(Console::ansiFormatCode([random_int(Console::FG_RED, Console::FG_GREY)]).$value."%n");
+
+				foreach ($taskData as $name => $value) {
+					Console::moveCursorTo(1, $name + 1);
+					Console::output(sprintf("%02s: %s", $name, $value));
+				}
+			}
+		}, [$channel]);
 
 	}
 
