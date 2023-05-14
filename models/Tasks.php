@@ -32,15 +32,15 @@ class Tasks {
 	}
 
 	/**
-	 * @param int $runTime
+	 * @param null|int $runTime
 	 * @param float $result
 	 * @return float
 	 * @throws Exception
 	 */
-	public static function simulateCalculation(float $result, int $runTime = 5):float {
+	public static function simulateCalculation(float $result, ?int $runTime = 5):float {
 		$startTime = microtime(true);
 		$rnd = Yii::$app->security->generateRandomString();
-		while ($runTime > microtime(true) - $startTime) {
+		while (null === $runTime || $runTime > microtime(true) - $startTime) {
 			$rnd = sha1($rnd);
 		}
 		return $result;
