@@ -7,6 +7,7 @@ use app\models\Tasks;
 use Exception;
 use parallel\Channel;
 use parallel\Future;
+use Throwable;
 use Yii;
 use yii\console\Application;
 use yii\console\Controller;
@@ -26,9 +27,7 @@ class ParallelController extends Controller {
 		$runtime = new Runtime();
 
 		$future = $runtime->run(function() {
-			for ($i = 0; $i < 500; $i++)
-				echo "*";
-
+			for ($i = 0; $i < 500; $i++) echo "*";
 			return "easy";
 		});
 
@@ -301,5 +300,30 @@ class ParallelController extends Controller {
 		Console::output(Console::renderColoredString("%bAsynchronous%n summary time for %b{$tasksCount}%n tasks is %g{$asynchronousTime}%n seconds"));
 		Console::output(sprintf("Difference is %s seconds", $synchronousTime - $asynchronousTime));
 		Console::output(Console::renderColoredString(sprintf("Results are %s", (array_sum($syncResults) === array_sum($asyncResults))?"%gequal%n":sprintf("%%rnot equal%%n: %s|%s", array_sum($syncResults), array_sum($asyncResults)))));
+	}
+
+	/**
+	 * This example shows how to catch exceptions inside parallel tasks
+	 * @return void
+	 */
+	public function actionSampleNine():void {
+		$runtime = new Runtime();
+
+		$future = $runtime->run(function() {
+			sleep(5);
+			throw new Exception('Exception inside a task');
+		});
+
+		for ($i = 0; $i < 500; $i++) {
+			echo ".";
+		}
+
+		try {
+			$v = $future->value();
+			printf("Task value is: %s", $v);
+		} catch (Throwable $throwable) {
+			printf("Exception «%s» happened", $throwable->getMessage());
+		}
+
 	}
 }
