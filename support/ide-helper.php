@@ -121,3 +121,13 @@ namespace parallel\Events\Event {
 		public const Error = 4;
 	}
 }
+
+namespace parallel\Events\Error {
+	use Throwable;
+
+	/**
+	 * Event timeout exception
+	 */
+	final class Timeout implements Throwable {
+	}
+}
