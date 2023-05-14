@@ -107,7 +107,7 @@ namespace parallel\Events {
 	}
 }
 
-namespace parallel\Events\Type {
+namespace parallel\Events\Event {
 
 	/**
 	 * @see https://www.php.net/manual/en/class.parallel-events-event-type.php
