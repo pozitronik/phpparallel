@@ -1,4 +1,7 @@
 <?php
+/** @noinspection PhpDocRedundantThrowsInspection */
+/** @noinspection PhpMixedReturnTypeCanBeReducedInspection */
+/** @noinspection PhpInconsistentReturnPointsInspection */
 /** @noinspection PhpHierarchyChecksInspection */
 /** @noinspection EmptyClassInspection */
 declare(strict_types = 1);
@@ -32,7 +35,8 @@ namespace parallel {
 		 * @param string $bootstrap There is a overloaded method call without this parameter, so it can be omitted (and have no default value at all)
 		 * Because PHP doesn't support overloading, only one signature is documented
 		 */
-		abstract public function __construct(string $bootstrap = '');
+		public function __construct(string $bootstrap = '') {
+		}
 
 		/**
 		 * @param Closure $task A Closure with specific characteristics.
@@ -42,7 +46,8 @@ namespace parallel {
 		 * @return Future|null
 		 * @see https://www.php.net/manual/en/parallel-runtime.run.php
 		 */
-		abstract public function run(Closure $task, array $argv = []):?Future;
+		public function run(Closure $task, array $argv = []):?Future {
+		}
 
 		/**
 		 * Runtime Graceful Join
@@ -50,7 +55,8 @@ namespace parallel {
 		 * @throws Closed
 		 * @see https://www.php.net/manual/en/parallel-runtime.close.php
 		 */
-		abstract public function close():void;
+		public function close():void {
+		}
 
 		/**
 		 * Attempt to force the runtime to shutdown.
@@ -58,7 +64,8 @@ namespace parallel {
 		 * @throws Closed
 		 * @see https://www.php.net/manual/en/parallel-runtime.kill.php
 		 */
-		abstract public function kill():void;
+		public function kill():void {
+		}
 	}
 
 	/**
@@ -75,21 +82,24 @@ namespace parallel {
 		 * @throws Throwable uncaught in task
 		 * @see https://www.php.net/manual/en/parallel-future.value.php
 		 */
-		abstract public function value():mixed;
+		public function value():mixed {
+		}
 
 		/**
 		 * Indicate if the task was cancelled
 		 * @return bool
 		 * @see https://www.php.net/manual/en/parallel-future.cancelled.php
 		 */
-		abstract public function cancelled():bool;
+		public function cancelled():bool {
+		}
 
 		/**
 		 * Indicate if the task is completed
 		 * @return bool
 		 * @see https://www.php.net/manual/en/parallel-future.done.php
 		 */
-		abstract public function done():bool;
+		public function done():bool {
+		}
 
 		/**
 		 * Try to cancel the task
@@ -97,7 +107,8 @@ namespace parallel {
 		 * @throws Killed If Runtime executing task was killed
 		 * @throws Cancelled If task was already cancelled
 		 */
-		abstract public function cancel():bool;
+		public function cancel():bool {
+		}
 	}
 
 	/**
@@ -110,7 +121,8 @@ namespace parallel {
 		 * @param int $capacity There is a overloaded method call without this parameter, so it can be omitted (and have no default value at all)
 		 * Because PHP doesn't support overloading, only one signature is documented
 		 */
-		abstract public function __construct(int $capacity = self::Infinite);
+		public function __construct(int $capacity = self::Infinite) {
+		}
 
 		/**
 		 * Create a named channel
@@ -121,7 +133,8 @@ namespace parallel {
 		 * @throws Existence If channel already exists
 		 * @see https://www.php.net/manual/en/parallel-channel.make.php
 		 */
-		abstract public function make(string $name, int $capacity):Channel;
+		public static function make(string $name, int $capacity):Channel {
+		}
 
 		/**
 		 * Open the channel with the given name
@@ -130,14 +143,16 @@ namespace parallel {
 		 * @throws Existence If channel does not exists
 		 * @see https://www.php.net/manual/en/parallel-channel.open.php
 		 */
-		abstract public function open(string $name):Channel;
+		public function open(string $name):Channel {
+		}
 
 		/**
 		 * Receive a value from this channel
 		 * @return mixed
 		 * @see https://www.php.net/manual/en/parallel-channel.recv.php
 		 */
-		abstract public function recv():mixed;
+		public function recv():mixed {
+		}
 
 		/**
 		 * Send the given value on this channel
@@ -147,7 +162,8 @@ namespace parallel {
 		 * @throws IllegalValue If value is illegal
 		 * @see https://www.php.net/manual/en/parallel-channel.send.php
 		 */
-		abstract public function send(mixed $value):void;
+		public function send(mixed $value):void {
+		}
 
 		/**
 		 * Close this channel
@@ -155,7 +171,8 @@ namespace parallel {
 		 * @throws Closed If channel is already closed
 		 * @see https://www.php.net/manual/en/parallel-channel.close.php
 		 */
-		abstract public function close():void;
+		public function close():void {
+		}
 	}
 
 	/**
@@ -169,7 +186,8 @@ namespace parallel {
 		 * @return void
 		 * @see https://www.php.net/manual/en/parallel-events.setinput.php
 		 */
-		abstract public function setInput(Input $input):void;
+		public function setInput(Input $input):void {
+		}
 
 		/**
 		 * Watch for events on the given channel
@@ -178,7 +196,8 @@ namespace parallel {
 		 * @throws Existence If channel was already added
 		 * @see https://www.php.net/manual/en/parallel-events.addchannel.php
 		 */
-		abstract public function addChannel(Channel $channel):void;
+		public function addChannel(Channel $channel):void {
+		}
 
 		/**
 		 * Watch for events on the given future
@@ -188,7 +207,8 @@ namespace parallel {
 		 * @throws Existence If target with the given name was already added
 		 * @see https://www.php.net/manual/en/parallel-events.addfuture.php
 		 */
-		abstract public function addFuture(string $name, Future $future):void;
+		public function addFuture(string $name, Future $future):void {
+		}
 
 		/**
 		 * Remove the given target
@@ -197,7 +217,8 @@ namespace parallel {
 		 * @throws Existence If target with the given name was not found
 		 * @see https://www.php.net/manual/en/parallel-events.remove.php
 		 */
-		abstract public function remove(string $target):void;
+		public function remove(string $target):void {
+		}
 
 		/**
 		 * Set blocking mode for the event
@@ -206,7 +227,8 @@ namespace parallel {
 		 * @throws Events\Error If loop has timeout set
 		 * @see https://www.php.net/manual/en/parallel-events.setblocking.php
 		 */
-		abstract public function setBlocking(bool $blocking):void;
+		public function setBlocking(bool $blocking):void {
+		}
 
 		/**
 		 * Set the timeout in microseconds
@@ -215,7 +237,8 @@ namespace parallel {
 		 * @throws Events\Error If loop is non-blocking
 		 * @see https://www.php.net/manual/en/parallel-events.settimeout.php
 		 */
-		abstract public function setTimeout(int $timeout):void;
+		public function setTimeout(int $timeout):void {
+		}
 
 		/**
 		 * Poll for the next event
@@ -223,7 +246,8 @@ namespace parallel {
 		 * @throws Timeout If timeout is used and reached
 		 * @see https://www.php.net/manual/en/parallel-events.poll.php
 		 */
-		abstract public function poll():?Event;
+		public function poll():?Event {
+		}
 	}
 
 	/**
@@ -238,14 +262,16 @@ namespace parallel {
 		 * @throws Sync\Error\IllegalValue If value is non-scalar
 		 * @see https://www.php.net/manual/en/parallel-sync.construct.php
 		 */
-		abstract public function __construct(bool|int|float|string $value);
+		public function __construct(bool|int|float|string $value) {
+		}
 
 		/**
 		 * Atomically return the synchronization objects value
 		 * @return bool|int|float|string
 		 * @see https://www.php.net/manual/en/parallel-sync.get.php
 		 */
-		abstract public function get():bool|int|float|string;
+		public function get():bool|int|float|string {
+		}
 
 		/**
 		 * Atomically set the value of the synchronization object
@@ -254,14 +280,16 @@ namespace parallel {
 		 * @throws Sync\Error\IllegalValue If value is non-scalar
 		 * @set https://www.php.net/manual/en/parallel-sync.set.php
 		 */
-		abstract public function set(bool|int|float|string $value):void;
+		public function set(bool|int|float|string $value):void {
+		}
 
 		/**
 		 * Wait for notification on this synchronization object
 		 * @return void
 		 * @throws https://www.php.net/manual/en/parallel-sync.wait.php
 		 */
-		abstract public function wait():void;
+		public function wait():void {
+		}
 
 		/**
 		 * Notify one (by default) or all threads waiting on the synchronization object
@@ -269,15 +297,17 @@ namespace parallel {
 		 * @return void
 		 * @see https://www.php.net/manual/en/parallel-sync.notify.php
 		 */
-		abstract public function notify(bool $all = false):void;
+		public function notify(bool $all = false):void {
+		}
 
 		/**
 		 * Exclusively enter into the critical code
 		 * @param callable $critical
-		 * @return mixed
+		 * @return void
 		 * @see https://www.php.net/manual/en/parallel-sync.invoke.php
 		 */
-		abstract public function __invoke(callable $critical);
+		public function __invoke(callable $critical):void {
+		}
 	}
 }
 
@@ -299,7 +329,8 @@ namespace parallel\Events {
 		 * @throws IllegalValue If value is illegal (object, null)
 		 * @see https://www.php.net/manual/en/parallel-events-input.add.php
 		 */
-		abstract public function add(string $target, mixed $value):void;
+		public function add(string $target, mixed $value):void {
+		}
 
 		/**
 		 * Remove input for the given target
@@ -308,14 +339,16 @@ namespace parallel\Events {
 		 * @throws Existence If input for target does not exists
 		 * @see https://www.php.net/manual/en/parallel-events-input.remove.php
 		 */
-		abstract public function remove(string $target):void;
+		public function remove(string $target):void {
+		}
 
 		/**
 		 * Remove input for all targets
 		 * @return void
 		 * @see https://www.php.net/manual/en/parallel-events-input.clear.php
 		 */
-		abstract public function clear():void;
+		public function clear():void {
+		}
 	}
 
 	/**
