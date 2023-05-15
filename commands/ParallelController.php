@@ -69,7 +69,7 @@ class ParallelController extends Controller {
 	 * @param null|int $pause Pass null to random wait time for every task
 	 * @return void
 	 */
-	public function actionExampleTree(int $threadsCnt = 10, ?int $pause = null):void {
+	public function actionExampleThree(int $threadsCnt = 10, ?int $pause = null):void {
 		$config = require Yii::getAlias('@app/config/console.php');
 		$task = static function(int $threadNumber, ?int $pause) use ($config):void {
 			new Application($config);//!important
