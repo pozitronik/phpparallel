@@ -143,7 +143,7 @@ namespace parallel {
 		 * @throws Existence If channel does not exists
 		 * @see https://www.php.net/manual/en/parallel-channel.open.php
 		 */
-		public function open(string $name):Channel {
+		public static function open(string $name):Channel {
 		}
 
 		/**
