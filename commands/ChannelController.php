@@ -110,4 +110,51 @@ class ChannelController extends Controller {
 			}
 		}, [$dataChannel]);
 	}
+
+	/**
+	 * This example shows how to use unbuferred channels to avoid infinite loops (a simple synchronization method).
+	 * Final execution time should be slightly more than longest wait time in the one task.
+	 * @param int $tasksCount
+	 * @return void
+	 */
+	public function actionExampleThree(int $tasksCount = 3):void {
+		Console::clearScreen();
+		$config = require Yii::getAlias('@app/config/console.php');
+		/** @var Runtime[] $runtimeList */
+		$runtimeList = [];
+		/** @var Channel[] $channelsList */
+		$channelsList = [];
+		$assumedResult = 0;//this value used for result comparison
+
+		/* Create set of tasks */
+		for ($i = 0; $i < $tasksCount; $i++) {
+			$runtimeList[] = new Runtime(Yii::getAlias('@app/bootstrap_console.php'));
+			$channelsList[] = new Channel();
+			$assumedResult += $i;
+		}
+
+		$startTime = microtime(true);
+
+		foreach ($runtimeList as $i => $runtime) {
+			$runtime->run(static function(Channel $channel) use ($i, $config):void {
+				new Application($config);
+				$waitTime = random_int(1, $i + 1);
+				Console::output(Console::renderColoredString("Task %w{$i}%n wait time is %r{$waitTime}%n"));
+				sleep($waitTime);
+				$channel->send($i);
+			}, [$channelsList[$i]]);
+		}
+
+		$result = 0;
+		foreach ($channelsList as $channel) {
+			$result += $channel->recv();
+			$channel->close();
+		}
+
+		$executionTime = microtime(true) - $startTime;
+
+		Console::output(Console::renderColoredString("Assumed result for %w{$tasksCount}%n tasks is %g{$assumedResult}%n, calculated result is %g{$result}%n"));
+		Console::output(Console::renderColoredString("Total execution time is %g{$executionTime}%n seconds"));
+	}
+
 }
