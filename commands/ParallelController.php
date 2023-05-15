@@ -6,6 +6,10 @@ namespace app\commands;
 use app\models\Tasks;
 use Exception;
 use parallel\Future;
+use parallel\Future\Error;
+use parallel\Future\Error\Cancelled;
+use parallel\Future\Error\Foreign;
+use parallel\Future\Error\Killed;
 use Throwable;
 use Yii;
 use yii\console\Application;
@@ -21,6 +25,11 @@ class ParallelController extends Controller {
 	/**
 	 * This example runs two parallel task simultaneously
 	 * @return void
+	 * @throws Cancelled
+	 * @throws Error
+	 * @throws Foreign
+	 * @throws Killed
+	 * @throws Throwable
 	 */
 	public function actionExampleOne():void {
 		$runtime = new Runtime();
@@ -92,7 +101,11 @@ class ParallelController extends Controller {
 	 * This example demonstrates parallel task effectiveness
 	 * @param int $tasksCount
 	 * @return void
-	 * @throws Exception
+	 * @throws Cancelled
+	 * @throws Error
+	 * @throws Foreign
+	 * @throws Killed
+	 * @throws Throwable
 	 */
 	public function actionExampleFour(int $tasksCount = 3):void {
 		$syncResults = [];
@@ -153,7 +166,11 @@ class ParallelController extends Controller {
 	 * This example demonstrates parallel task effectiveness (with additional bootstrapping)
 	 * @param int $tasksCount
 	 * @return void
-	 * @throws Exception
+	 * @throws Cancelled
+	 * @throws Error
+	 * @throws Foreign
+	 * @throws Killed
+	 * @throws Throwable
 	 */
 	public function actionExampleFive(int $tasksCount = 3):void {
 		$syncResults = [];
@@ -211,8 +228,14 @@ class ParallelController extends Controller {
 	 * This test demonstrates real calculation performance (it is nice to look at the task manager, while it runs)
 	 * @param int $tasksCount
 	 * @param int $runTime
+	 * @param bool $skipSyncTest
 	 * @return void
-	 * @throws Exception
+	 * @throws Error
+	 * @throws Cancelled
+	 * @throws Foreign
+	 * @throws Killed
+	 * @throws Throwable
+	 * @throws \yii\base\Exception
 	 */
 	public function actionExampleSix(int $tasksCount = 3, int $runTime = 5, bool $skipSyncTest = false):void {
 		$syncResults = [];

@@ -5,6 +5,7 @@ namespace app\commands;
 
 use parallel\Channel;
 use parallel\Runtime;
+use parallel\Runtime\Error\Closed;
 use Yii;
 use yii\console\Application;
 use yii\console\Controller;
@@ -116,6 +117,7 @@ class ChannelController extends Controller {
 	 * Final execution time should be slightly more than longest wait time in the one task.
 	 * @param int $tasksCount
 	 * @return void
+	 * @throws Closed
 	 */
 	public function actionExampleThree(int $tasksCount = 3):void {
 		Console::clearScreen();
