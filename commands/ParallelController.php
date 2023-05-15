@@ -214,7 +214,7 @@ class ParallelController extends Controller {
 	 * @return void
 	 * @throws Exception
 	 */
-	public function actionExampleSix(int $tasksCount = 3, int $runTime = 5):void {
+	public function actionExampleSix(int $tasksCount = 3, int $runTime = 5, bool $skipSyncTest = false):void {
 		$syncResults = [];
 		$asyncResults = [];
 		/** @var Runtime[] $runtimeList */
@@ -230,12 +230,19 @@ class ParallelController extends Controller {
 
 		/*Let say we have a set of long operations (e.g. DB requests). At first, run them synchronously: */
 		$startTime = microtime(true);
-		for ($i = 0; $i < $tasksCount; $i++) {
-			$syncResults[] = Tasks::simulateCalculation($results[$i], $runTime);
+		if (!$skipSyncTest) {
+			for ($i = 0; $i < $tasksCount; $i++) {
+				$syncResults[] = Tasks::simulateCalculation($results[$i], $runTime);
+			}
 		}
 		/* Measure execution time */
 		$synchronousTime = microtime(true) - $startTime;
-		Console::output(Console::renderColoredString("%bSynchronous%n summary time for %b{$tasksCount}%n tasks is %g{$synchronousTime}%n seconds"));
+		if ($skipSyncTest) {
+			Console::output(Console::renderColoredString("%bSynchronous%n run is %rskipped%n"));
+		} else {
+			Console::output(Console::renderColoredString("%bSynchronous%n summary time for %b{$tasksCount}%n tasks is %g{$synchronousTime}%n seconds"));
+		}
+
 
 		/*At second, run each task in a separate process: */
 		$startTime = microtime(true);
