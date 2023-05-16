@@ -7,13 +7,13 @@ $runtime = new Runtime();
 
 $future = $runtime->run(function(){
 	for ($i = 0; $i < 500; $i++)
-		echo "*";
+		echo "!";
 
-	return "easy";
+	return "работает";
 });
 
 for ($i = 0; $i < 500; $i++) {
 	echo ".";
 }
 
-printf("\nUsing \\parallel\\Runtime is %s\n", $future->value());
+printf("\nПараллелизм %s\n", $future->value());
