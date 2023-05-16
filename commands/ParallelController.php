@@ -12,6 +12,7 @@ use parallel\Future\Error\Foreign;
 use parallel\Future\Error\Killed;
 use Throwable;
 use Yii;
+use yii\base\Exception as BaseException;
 use yii\console\Application;
 use yii\console\Controller;
 use parallel\Runtime;
@@ -235,7 +236,7 @@ class ParallelController extends Controller {
 	 * @throws Foreign
 	 * @throws Killed
 	 * @throws Throwable
-	 * @throws \yii\base\Exception
+	 * @throws BaseException
 	 */
 	public function actionExampleSix(int $tasksCount = 3, int $runTime = 5, bool $skipSyncTest = false):void {
 		$syncResults = [];
